@@ -657,6 +657,135 @@
     border-radius: 10px; font-size: 13px; font-weight: 700; color: var(--accent-red);
   }
   .live-game-banner.show { display: flex; }
+
+  /* ── LIVE IN-GAME WIN PROBABILITY TRACKER ── */
+  .live-tracker-section {
+    background: linear-gradient(160deg,#0f0a0a 0%,#120f1a 100%);
+    border: 1px solid rgba(239,68,68,0.4); border-radius:16px;
+    overflow:hidden; position:relative; margin-bottom:24px;
+  }
+  .live-tracker-section::before {
+    content:''; position:absolute; top:0; left:0; right:0; height:2px;
+    background:linear-gradient(90deg,transparent,#ef4444,#f59e0b,#ef4444,transparent);
+    animation: shimmer 3s infinite;
+  }
+  @keyframes shimmer { 0%,100%{opacity:.6} 50%{opacity:1} }
+
+  .live-hdr {
+    display:flex; align-items:center; gap:12px; padding:12px 20px;
+    background:rgba(239,68,68,0.06); border-bottom:1px solid rgba(239,68,68,0.15);
+    flex-wrap:wrap;
+  }
+  .live-badge {
+    display:flex; align-items:center; gap:5px; background:#ef4444;
+    color:#fff; font-size:9px; font-weight:900; letter-spacing:2px;
+    padding:4px 10px; border-radius:4px; flex-shrink:0;
+  }
+  .live-dot-anim { width:6px;height:6px;border-radius:50%;background:#fff;animation:pulse 1s infinite; }
+  .live-hdr-period { font-family:'Courier New',monospace; font-size:18px; font-weight:900; color:var(--accent-red); }
+  .live-hdr-gamename { font-size:12px; font-weight:700; color:var(--text-primary); }
+  .live-hdr-series { font-size:11px; color:var(--text-secondary); }
+  .live-hdr-right { margin-left:auto; display:flex; align-items:center; gap:10px; }
+  .live-refresh-btn {
+    display:flex; align-items:center; gap:5px; padding:5px 12px;
+    background:rgba(255,255,255,0.05); border:1px solid var(--border-bright);
+    border-radius:6px; color:var(--text-secondary); font-size:11px; cursor:pointer;
+    transition:all .15s;
+  }
+  .live-refresh-btn:hover { color:var(--text-primary); border-color:var(--accent-red); }
+  .live-countdown { font-size:10px; color:var(--text-muted); }
+
+  .live-scoreboard {
+    display:grid; grid-template-columns:1fr auto 1fr; align-items:center;
+    padding:22px 28px; gap:16px; border-bottom:1px solid rgba(255,255,255,0.05);
+  }
+  .live-team { display:flex; flex-direction:column; }
+  .live-team.away { align-items:flex-end; }
+  .live-team-abbr { font-size:11px; color:var(--text-muted); text-transform:uppercase; letter-spacing:1.5px; }
+  .live-team-name-lg { font-size:15px; font-weight:800; color:var(--text-primary); }
+  .live-team-score-lg {
+    font-size:62px; font-weight:900; line-height:1.05;
+    font-family:'Courier New',monospace; color:var(--text-primary); transition:color .4s;
+  }
+  .live-team-score-lg.leading { color:var(--win-color); }
+  .live-team-score-lg.trailing { color:var(--text-secondary); }
+  .live-score-mid { display:flex; flex-direction:column; align-items:center; gap:4px; }
+  .live-score-dash { font-size:28px; color:var(--text-muted); font-weight:300; }
+  .live-score-diff {
+    font-size:11px; font-weight:700; padding:2px 8px; border-radius:10px;
+    background:rgba(255,255,255,0.07); color:var(--text-secondary);
+  }
+
+  .live-prob-section { padding:16px 28px; border-bottom:1px solid rgba(255,255,255,0.05); }
+  .live-prob-row { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px; }
+  .live-prob-team-lbl { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.5px; color:var(--text-secondary); }
+  .live-prob-num { font-size:22px; font-weight:900; }
+  .live-prob-num.home-col { color:var(--accent-gold); }
+  .live-prob-num.away-col { color:var(--accent-purple); }
+  .live-prob-track { width:100%; height:14px; border-radius:7px; background:rgba(139,92,246,.25); overflow:hidden; position:relative; }
+  .live-prob-fill {
+    height:100%; border-radius:7px;
+    background:linear-gradient(90deg,#f59e0b,#f97316);
+    transition:width .9s cubic-bezier(.4,0,.2,1);
+    position:relative;
+  }
+  .live-prob-fill::after {
+    content:''; position:absolute; right:0; top:0; bottom:0; width:3px;
+    background:rgba(255,255,255,.85); border-radius:2px;
+  }
+  .live-prob-src { font-size:10px; color:var(--text-muted); text-align:center; margin-top:5px; }
+
+  .live-bottom-grid { display:grid; grid-template-columns:1fr 210px; }
+  .live-chart-panel { padding:16px 20px; border-right:1px solid rgba(255,255,255,0.06); }
+  .live-chart-lbl { font-size:10px; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; }
+  .live-svg-wrap { width:100%; }
+  .live-svg-wrap svg { width:100%; height:90px; overflow:visible; }
+
+  .live-impl-panel { padding:16px 18px; display:flex; flex-direction:column; gap:0; }
+  .live-impl-title { font-size:10px; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:10px; }
+  .live-impl-row { display:flex; justify-content:space-between; align-items:center; padding:5px 0; }
+  .live-impl-lbl { font-size:11px; color:var(--text-secondary); }
+  .live-impl-pct { font-size:14px; font-weight:800; }
+  .live-impl-pct.g { color:var(--win-color); }
+  .live-impl-pct.r { color:var(--accent-red); }
+  .live-impl-divider { height:1px; background:var(--border); margin:8px 0; }
+  .live-impl-total-wrap { text-align:center; margin-top:4px; }
+  .live-impl-total-lbl { font-size:9px; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px; }
+  .live-impl-total-num { font-size:28px; font-weight:900; color:var(--accent-gold); line-height:1.1; }
+  .live-impl-total-sub { font-size:10px; color:var(--text-muted); }
+
+  /* What-If Simulator */
+  .whatif-section {
+    background:var(--bg-card); border:1px solid var(--border-bright);
+    border-radius:16px; padding:22px 24px; margin-bottom:24px;
+  }
+  .whatif-grid { display:grid; grid-template-columns:repeat(4,1fr) auto; gap:10px; align-items:flex-end; margin-top:14px; }
+  .whatif-result { display:flex; gap:12px; margin-top:16px; flex-wrap:wrap; }
+  .whatif-stat {
+    background:var(--bg-secondary); border:1px solid var(--border);
+    border-radius:10px; padding:12px 16px; flex:1; min-width:110px;
+  }
+  .whatif-stat-lbl { font-size:9px; color:var(--text-muted); text-transform:uppercase; letter-spacing:.8px; margin-bottom:4px; }
+  .whatif-stat-val { font-size:22px; font-weight:900; }
+  .whatif-stat-val.highlight { color:var(--accent-gold); }
+
+  /* Pre-game section */
+  .pregame-section {
+    background:linear-gradient(135deg,#0f172a,#111827);
+    border:1px solid var(--border-bright); border-radius:16px;
+    padding:22px 24px; margin-bottom:24px;
+    display:flex; align-items:center; gap:20px; flex-wrap:wrap;
+  }
+  .pregame-icon { font-size:32px; }
+  .pregame-info { flex:1; }
+  .pregame-title { font-size:16px; font-weight:800; color:var(--text-primary); margin-bottom:4px; }
+  .pregame-sub { font-size:12px; color:var(--text-secondary); }
+  .pregame-probs { display:flex; gap:16px; }
+  .pregame-prob-item { text-align:center; }
+  .pregame-prob-team { font-size:10px; color:var(--text-muted); text-transform:uppercase; letter-spacing:.8px; }
+  .pregame-prob-val { font-size:22px; font-weight:900; }
+  .pregame-prob-val.home-col { color:var(--accent-gold); }
+  .pregame-prob-val.away-col { color:var(--accent-purple); }
 </style>
 </head>
 <body>
@@ -733,6 +862,162 @@
       </div>
     </div>
     <div class="api-log" id="apiLog"></div>
+  </section>
+
+  <!-- ══════════ LIVE GAME TRACKER ══════════ -->
+  <section class="live-tracker-section" id="liveTrackerSection" style="display:none;">
+    <!-- Header -->
+    <div class="live-hdr">
+      <div class="live-badge"><span class="live-dot-anim"></span>LIVE</div>
+      <span class="live-hdr-period" id="liveHdrPeriod">Q1 · 12:00</span>
+      <div>
+        <div class="live-hdr-gamename" id="liveHdrGame">Game 5 · Western Conference Finals</div>
+        <div class="live-hdr-series" id="liveHdrSeries">Series tied 2-2</div>
+      </div>
+      <div class="live-hdr-right">
+        <span class="live-countdown" id="liveCountdown"></span>
+        <button class="live-refresh-btn" onclick="refreshLiveData()">↻ Refresh</button>
+      </div>
+    </div>
+    <!-- Scoreboard -->
+    <div class="live-scoreboard">
+      <div class="live-team">
+        <div class="live-team-abbr" id="liveSbAbbr1">OKC</div>
+        <div class="live-team-name-lg" id="liveSbName1">Oklahoma City Thunder</div>
+        <div class="live-team-score-lg" id="liveSbScore1">0</div>
+        <div class="live-team-abbr" id="liveSbVenue1" style="margin-top:4px;color:var(--accent-gold);">HOME</div>
+      </div>
+      <div class="live-score-mid">
+        <span class="live-score-dash">–</span>
+        <span class="live-score-diff" id="liveScoreDiff">TIED</span>
+      </div>
+      <div class="live-team away">
+        <div class="live-team-abbr" id="liveSbAbbr2">SA</div>
+        <div class="live-team-name-lg" id="liveSbName2">San Antonio Spurs</div>
+        <div class="live-team-score-lg" id="liveSbScore2">0</div>
+        <div class="live-team-abbr" id="liveSbVenue2" style="margin-top:4px;">AWAY</div>
+      </div>
+    </div>
+    <!-- Win probability bar -->
+    <div class="live-prob-section">
+      <div class="live-prob-row">
+        <div>
+          <div class="live-prob-team-lbl" id="liveProbLbl1">Oklahoma City Thunder</div>
+          <div class="live-prob-num home-col" id="liveProbPct1">—</div>
+        </div>
+        <div style="text-align:right;">
+          <div class="live-prob-team-lbl" id="liveProbLbl2">San Antonio Spurs</div>
+          <div class="live-prob-num away-col" id="liveProbPct2">—</div>
+        </div>
+      </div>
+      <div class="live-prob-track">
+        <div class="live-prob-fill" id="liveProbFill" style="width:50%;"></div>
+      </div>
+      <div class="live-prob-src" id="liveProbSrc">Loading probability data…</div>
+    </div>
+    <!-- Chart + Series Implications -->
+    <div class="live-bottom-grid">
+      <div class="live-chart-panel">
+        <div class="live-chart-lbl">Win Probability History</div>
+        <div class="live-svg-wrap" id="liveSvgWrap">
+          <svg viewBox="0 0 400 90" id="liveProbSvg" preserveAspectRatio="none">
+            <text x="200" y="48" text-anchor="middle" fill="#475569" font-size="11">Loading chart…</text>
+          </svg>
+        </div>
+      </div>
+      <div class="live-impl-panel">
+        <div class="live-impl-title">Series Implications</div>
+        <div class="live-impl-row">
+          <span class="live-impl-lbl" id="liveImplLbl1">If OKC wins →</span>
+          <span class="live-impl-pct g" id="liveImplPct1">—</span>
+        </div>
+        <div class="live-impl-row">
+          <span class="live-impl-lbl" id="liveImplLbl2">If SA wins →</span>
+          <span class="live-impl-pct r" id="liveImplPct2">—</span>
+        </div>
+        <div class="live-impl-divider"></div>
+        <div class="live-impl-total-wrap">
+          <div class="live-impl-total-lbl">Live Series Est.</div>
+          <div class="live-impl-total-num" id="liveImplTotal">—</div>
+          <div class="live-impl-total-sub" id="liveImplTotalSub">series win probability</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pre-game panel (shown when no live game) -->
+  <section class="pregame-section" id="pregameSection" style="display:none;">
+    <div class="pregame-icon">📅</div>
+    <div class="pregame-info">
+      <div class="pregame-title" id="pregameTitle">Game 5 · Western Conference Finals</div>
+      <div class="pregame-sub" id="pregameSub">Tip-off information loading…</div>
+    </div>
+    <div class="pregame-probs" id="pregameProbs">
+      <div class="pregame-prob-item">
+        <div class="pregame-prob-team" id="pregameProbTeam1">OKC</div>
+        <div class="pregame-prob-val home-col" id="pregameProbVal1">—</div>
+      </div>
+      <div class="pregame-prob-item" style="align-self:center;color:var(--text-muted);font-size:13px;">pre-game</div>
+      <div class="pregame-prob-item">
+        <div class="pregame-prob-team" id="pregameProbTeam2">SA</div>
+        <div class="pregame-prob-val away-col" id="pregameProbVal2">—</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- What-If Game State Simulator -->
+  <section class="whatif-section">
+    <div class="section-title" style="color:var(--accent-blue);">⚡ In-Game Win Probability Simulator</div>
+    <div style="font-size:13px;color:var(--text-secondary);margin-top:4px;">
+      Enter any game state — live or hypothetical — to compute win probability and series impact.
+    </div>
+    <div class="whatif-grid">
+      <div>
+        <label style="font-size:11px;color:var(--text-secondary);display:block;margin-bottom:6px;text-transform:uppercase;letter-spacing:.8px;">Period</label>
+        <select class="config-input" id="wiPeriod">
+          <option value="1">Q1</option><option value="2">Q2</option>
+          <option value="3">Q3</option><option value="4" selected>Q4</option>
+          <option value="5">OT1</option><option value="6">OT2</option>
+        </select>
+      </div>
+      <div>
+        <label style="font-size:11px;color:var(--text-secondary);display:block;margin-bottom:6px;text-transform:uppercase;letter-spacing:.8px;">Clock</label>
+        <input type="text" class="config-input" id="wiClock" value="5:00" placeholder="M:SS">
+      </div>
+      <div>
+        <label style="font-size:11px;color:var(--text-secondary);display:block;margin-bottom:6px;text-transform:uppercase;letter-spacing:.8px;" id="wiLbl1">OKC Score</label>
+        <input type="number" class="config-input" id="wiScore1" value="88" min="0">
+      </div>
+      <div>
+        <label style="font-size:11px;color:var(--text-secondary);display:block;margin-bottom:6px;text-transform:uppercase;letter-spacing:.8px;" id="wiLbl2">SA Score</label>
+        <input type="number" class="config-input" id="wiScore2" value="82" min="0">
+      </div>
+      <div>
+        <button class="btn btn-primary" onclick="runWhatIf()" style="background:linear-gradient(135deg,#1d4ed8,#2563eb);">Simulate</button>
+      </div>
+    </div>
+    <div class="whatif-result" id="whatifResult" style="display:none;">
+      <div class="whatif-stat">
+        <div class="whatif-stat-lbl" id="wiResultTeam1Lbl">OKC Win Prob</div>
+        <div class="whatif-stat-val highlight" id="wiGameProb1">—</div>
+      </div>
+      <div class="whatif-stat">
+        <div class="whatif-stat-lbl" id="wiResultTeam2Lbl">SA Win Prob</div>
+        <div class="whatif-stat-val" id="wiGameProb2">—</div>
+      </div>
+      <div class="whatif-stat">
+        <div class="whatif-stat-lbl">If OKC wins game</div>
+        <div class="whatif-stat-val" style="color:var(--win-color);" id="wiSeriesIfWin">—</div>
+      </div>
+      <div class="whatif-stat">
+        <div class="whatif-stat-lbl">If SA wins game</div>
+        <div class="whatif-stat-val" style="color:var(--accent-red);" id="wiSeriesIfLose">—</div>
+      </div>
+      <div class="whatif-stat">
+        <div class="whatif-stat-lbl">Live Series Est.</div>
+        <div class="whatif-stat-val highlight" id="wiSeriesLive">—</div>
+      </div>
+    </div>
   </section>
 
   <!-- SERIES CONFIG -->
@@ -1870,6 +2155,8 @@ function populateFromAPIData({ team1, team2, completedGames }) {
   updateAll();
   // Auto-run Monte Carlo with new data
   setTimeout(() => runMonteCarlo(10000), 300);
+  // Kick off live tracker after series data is loaded
+  setTimeout(() => refreshLiveData().then(startLivePolling), 600);
 }
 
 // ── Next game banner ─────────────────────────────────────────────────────────
@@ -1903,6 +2190,315 @@ function toggleAutoRefresh(src) {
     API_STATE.refreshTimer = null;
     apiLog('Auto-refresh disabled', 'info');
   }
+}
+
+// ─── LIVE IN-GAME WIN PROBABILITY ─────────────────────────────────────────────
+const LIVE = {
+  eventId:    null,
+  polling:    null,
+  lastUpdate: null,
+  probHistory:[],       // [{seq, homeWinPct}] where home = series team1 perspective
+  team1IsHome: true,    // is series team1 the ESPN "home" team for this game?
+  gameWinProb: null,    // 0-100, team1's win probability for current game
+  period:     0,
+  clock:      '',
+  score1:     0,        // team1 score
+  score2:     0,        // team2 score
+  source:     'model',  // 'espn' | 'model'
+};
+
+// ── In-game win probability model (NBA calibrated logistic) ───────────────────
+// Based on the Stern/Oliver framework: logit(p) = k·diff·√(T₀/T_remaining)
+// k=0.0481 calibrated so that a 10-pt lead with 5min left ≈ 82% win prob.
+function computeInGameWinProb(scoreDiff, period, clockStr) {
+  const isOT = period > 4;
+  const [rawMins, rawSecs] = (clockStr || '0:00').split(':').map(Number);
+  const secsInPeriod = (rawMins || 0) * 60 + (rawSecs || 0);
+  const periodSecs   = isOT ? 5 * 60 : 12 * 60;          // OT = 5 min, reg = 12 min
+  const periodsLeft  = isOT ? 0 : Math.max(0, 4 - period); // quarters left after current
+  const totalRemaining = periodsLeft * periodSecs + secsInPeriod;
+
+  if (totalRemaining <= 0) {
+    return scoreDiff > 0 ? 99.5 : scoreDiff < 0 ? 0.5 : 50;
+  }
+  const T0 = 48 * 60; // regulation seconds
+  const z  = 0.0481 * scoreDiff * Math.sqrt(T0 / totalRemaining);
+  return (1 / (1 + Math.exp(-z))) * 100;
+}
+
+// ── Fetch ESPN's per-play win probability history ─────────────────────────────
+async function fetchProbHistory(eventId, team1IsHome) {
+  const url = `https://sports.core.api.espn.com/v2/sports/basketball/leagues/nba/events/${eventId}/competitions/${eventId}/probabilities?limit=600`;
+  const res  = await fetch(url);
+  if (!res.ok) throw new Error('Probabilities API ' + res.status);
+  const data = await res.json();
+  const items = data.items || [];
+  return items.map(item => ({
+    seq:         parseInt(item.sequenceNumber) || 0,
+    // homeWinPercentage is for ESPN's "home" team — flip if team1 is the away team
+    homeWinPct:  team1IsHome
+                   ? (item.homeWinPercentage || 50) * 100
+                   : (item.awayWinPercentage || 50) * 100,
+  })).sort((a, b) => a.seq - b.seq);
+}
+
+// ── Check ESPN scoreboard for a live WCF game ─────────────────────────────────
+async function fetchLiveWCFGame() {
+  const res  = await fetch('https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard?seasontype=3');
+  const data = await res.json();
+  for (const event of (data.events || [])) {
+    const name = event.name || '';
+    if (isEastGame(name)) continue;
+    const statusName = event.status?.type?.name || '';
+    const comp  = event.competitions?.[0];
+    const comps = comp?.competitors || [];
+    const homeC = comps.find(c => c.homeAway === 'home');
+    const awayC = comps.find(c => c.homeAway === 'away');
+    if (!homeC || !awayC) continue;
+    return {
+      eventId:   event.id,
+      isLive:    statusName === 'STATUS_IN_PROGRESS',
+      isScheduled: statusName === 'STATUS_SCHEDULED',
+      period:    event.status?.period || 1,
+      clock:     event.status?.displayClock || '12:00',
+      homeTeam:  homeC.team?.displayName || '',
+      awayTeam:  awayC.team?.displayName || '',
+      homeScore: parseInt(homeC.score) || 0,
+      awayScore: parseInt(awayC.score) || 0,
+      seriesSummary: comp?.series?.summary || '',
+      date:      event.date,
+    };
+  }
+  return null;
+}
+
+// ── Master refresh: fetch + update UI ─────────────────────────────────────────
+async function refreshLiveData() {
+  try {
+    const game = await fetchLiveWCFGame();
+
+    // Update What-If label placeholders
+    const t1 = state.team1 || 'Home'; const t2 = state.team2 || 'Away';
+    document.getElementById('wiLbl1').textContent = t1 + ' Score';
+    document.getElementById('wiLbl2').textContent = t2 + ' Score';
+    document.getElementById('wiResultTeam1Lbl').textContent = t1 + ' Win Prob';
+    document.getElementById('wiResultTeam2Lbl').textContent = t2 + ' Win Prob';
+
+    if (!game) {
+      document.getElementById('liveTrackerSection').style.display = 'none';
+      document.getElementById('pregameSection').style.display    = 'none';
+      return;
+    }
+
+    // Identify team1 perspective
+    const team1IsHome = game.homeTeam === state.team1;
+    LIVE.team1IsHome = team1IsHome;
+    LIVE.eventId    = game.eventId;
+    LIVE.period     = game.period;
+    LIVE.clock      = game.clock;
+    LIVE.score1     = team1IsHome ? game.homeScore : game.awayScore;
+    LIVE.score2     = team1IsHome ? game.awayScore : game.homeScore;
+
+    if (game.isLive) {
+      // ── LIVE GAME ──────────────────────────────────────────────────────────
+      document.getElementById('liveTrackerSection').style.display = 'block';
+      document.getElementById('pregameSection').style.display    = 'none';
+
+      // Attempt ESPN probability history; fall back to model
+      try {
+        LIVE.probHistory = await fetchProbHistory(game.eventId, team1IsHome);
+        const latest     = LIVE.probHistory[LIVE.probHistory.length - 1];
+        LIVE.gameWinProb = latest ? latest.homeWinPct : 50;
+        LIVE.source      = 'ESPN Probability Engine';
+      } catch(_) {
+        LIVE.gameWinProb = computeInGameWinProb(LIVE.score1 - LIVE.score2, game.period, game.clock);
+        LIVE.source      = 'Logistic Model (ESPN unavailable)';
+        LIVE.probHistory = [];
+      }
+
+      updateLivePanel(game);
+
+    } else if (game.isScheduled) {
+      // ── PRE-GAME ───────────────────────────────────────────────────────────
+      document.getElementById('liveTrackerSection').style.display = 'none';
+      document.getElementById('pregameSection').style.display    = 'flex';
+      showPregamePanel(game, team1IsHome);
+    }
+
+    LIVE.lastUpdate = new Date();
+    document.getElementById('liveCountdown').textContent = 'Updated ' + LIVE.lastUpdate.toLocaleTimeString();
+
+  } catch(err) {
+    console.warn('Live data refresh error:', err);
+  }
+}
+
+// ── Update the live panel DOM ─────────────────────────────────────────────────
+function updateLivePanel(game) {
+  const t1 = state.team1 || game.homeTeam;
+  const t2 = state.team2 || game.awayTeam;
+  const hw = state.games.filter(g => g.winner === 'home').length;
+  const aw = state.games.filter(g => g.winner === 'away').length;
+  const p  = LIVE.gameWinProb;
+  const diff = LIVE.score1 - LIVE.score2;
+
+  // Header
+  const periodStr = game.period <= 4 ? `Q${game.period}` : `OT${game.period - 4}`;
+  document.getElementById('liveHdrPeriod').textContent  = `${periodStr} · ${game.clock}`;
+  document.getElementById('liveHdrGame').textContent    = `Game ${hw + aw + 1} · Western Conference Finals`;
+  document.getElementById('liveHdrSeries').textContent  = game.seriesSummary;
+
+  // Scoreboard
+  const s1El = document.getElementById('liveSbScore1');
+  const s2El = document.getElementById('liveSbScore2');
+  document.getElementById('liveSbName1').textContent = t1;
+  document.getElementById('liveSbName2').textContent = t2;
+  s1El.textContent = LIVE.score1;
+  s2El.textContent = LIVE.score2;
+  s1El.className = 'live-team-score-lg ' + (diff > 0 ? 'leading' : diff < 0 ? 'trailing' : '');
+  s2El.className = 'live-team-score-lg ' + (diff < 0 ? 'leading' : diff > 0 ? 'trailing' : '');
+  document.getElementById('liveSbVenue1').textContent = LIVE.team1IsHome ? 'HOME' : 'AWAY';
+  document.getElementById('liveSbVenue2').textContent = LIVE.team1IsHome ? 'AWAY' : 'HOME';
+
+  const absDiff = Math.abs(diff);
+  document.getElementById('liveScoreDiff').textContent =
+    diff === 0 ? 'TIED' : `${t1.split(' ').pop()} +${absDiff}`;
+
+  // Win probability bar
+  document.getElementById('liveProbLbl1').textContent = t1;
+  document.getElementById('liveProbLbl2').textContent = t2;
+  document.getElementById('liveProbPct1').textContent = p.toFixed(1) + '%';
+  document.getElementById('liveProbPct2').textContent = (100 - p).toFixed(1) + '%';
+  document.getElementById('liveProbFill').style.width = p + '%';
+  document.getElementById('liveProbSrc').textContent  = LIVE.source;
+
+  // Series implications
+  const impl = computeSeriesImplications(p / 100, hw, aw);
+  document.getElementById('liveImplLbl1').textContent = `If ${t1.split(' ').pop()} wins →`;
+  document.getElementById('liveImplLbl2').textContent = `If ${t2.split(' ').pop()} wins →`;
+  document.getElementById('liveImplPct1').textContent = impl.ifWin.toFixed(1) + '%';
+  document.getElementById('liveImplPct2').textContent = impl.ifLose.toFixed(1) + '%';
+  document.getElementById('liveImplTotal').textContent = impl.live.toFixed(1) + '%';
+  document.getElementById('liveImplTotalSub').textContent = `${t1.split(' ').pop()} series win prob`;
+
+  // Win probability SVG chart
+  drawWinProbSVG(LIVE.probHistory, p);
+}
+
+// ── Compute series implications given game win probability ────────────────────
+function computeSeriesImplications(gameWinProb, hw, aw) {
+  // If series is already decided, no further game matters
+  if (hw >= 4 || aw >= 4) return { ifWin: hw >= 4 ? 100 : 0, ifLose: hw >= 4 ? 100 : 0, live: hw >= 4 ? 100 : 0 };
+  const hcaAdj  = state.hca / 100;
+  const baseP   = Math.min(0.94, Math.max(0.06, state.prior / 100));
+  // For future games use neutral base (averaged HCA will apply later)
+  const pSeries = Math.min(0.94, Math.max(0.06, baseP));
+  // seriesProb() returns 0-100 directly — no extra multiply needed
+  const ifWin  = seriesProb(pSeries, hw + 1, aw);
+  const ifLose = seriesProb(pSeries, hw, aw + 1);
+  // gameWinProb is passed as 0-1 fraction, ifWin/ifLose are 0-100 → result is 0-100
+  const live   = gameWinProb * ifWin + (1 - gameWinProb) * ifLose;
+  return { ifWin, ifLose, live };
+}
+
+// ── Draw SVG win probability history chart ────────────────────────────────────
+function drawWinProbSVG(history, currentPct) {
+  const W = 400, H = 90;
+  const pad = { t: 6, b: 6, l: 4, r: 4 };
+  const iw  = W - pad.l - pad.r;
+  const ih  = H - pad.t - pad.b;
+
+  // Build data points — use history if available, otherwise synthesise current point
+  let pts = history.length >= 2
+    ? history.map((d, i) => ({ x: i / (history.length - 1), y: d.homeWinPct / 100 }))
+    : [{ x: 0, y: 0.5 }, { x: 1, y: currentPct / 100 }];
+
+  const toSVG = (px, py) => [
+    (pad.l + px * iw).toFixed(1),
+    (pad.t + (1 - py) * ih).toFixed(1),
+  ];
+
+  const polyPts = pts.map(p => toSVG(p.x, p.y).join(',')).join(' ');
+  const lastPt  = toSVG(pts[pts.length - 1].x, pts[pts.length - 1].y);
+  const midY    = (pad.t + ih / 2).toFixed(1);
+
+  // Fill polygon (close path to bottom)
+  const fillPts = polyPts + ` ${toSVG(1, 0).join(',')} ${toSVG(0, 0).join(',')}`;
+
+  const svg = `
+    <rect x="0" y="0" width="${W}" height="${H}" fill="none"/>
+    <!-- 50% reference line -->
+    <line x1="${pad.l}" y1="${midY}" x2="${W - pad.r}" y2="${midY}"
+          stroke="#334155" stroke-width="1" stroke-dasharray="4,4"/>
+    <text x="${pad.l + 2}" y="${+midY - 3}" fill="#475569" font-size="8">50%</text>
+    <!-- Fill area -->
+    <polygon points="${fillPts}" fill="rgba(245,158,11,0.12)"/>
+    <!-- Probability line -->
+    <polyline points="${polyPts}" fill="none" stroke="#f59e0b" stroke-width="2"
+              stroke-linejoin="round" stroke-linecap="round"/>
+    <!-- Current value dot -->
+    <circle cx="${lastPt[0]}" cy="${lastPt[1]}" r="4" fill="#f59e0b"/>
+    <circle cx="${lastPt[0]}" cy="${lastPt[1]}" r="7" fill="rgba(245,158,11,0.25)"/>
+    <!-- Current label -->
+    <text x="${+lastPt[0] - 2}" y="${+lastPt[1] - 10}" fill="#f59e0b" font-size="9"
+          text-anchor="middle" font-weight="700">${currentPct.toFixed(0)}%</text>
+  `;
+
+  document.getElementById('liveProbSvg').innerHTML = svg;
+}
+
+// ── Pre-game panel ────────────────────────────────────────────────────────────
+function showPregamePanel(game, team1IsHome) {
+  const t1 = state.team1 || (team1IsHome ? game.homeTeam : game.awayTeam);
+  const t2 = state.team2 || (team1IsHome ? game.awayTeam : game.homeTeam);
+  const hw = state.games.filter(g => g.winner === 'home').length;
+  const aw = state.games.filter(g => g.winner === 'away').length;
+  const venue    = team1IsHome ? 'home' : 'away';
+  const hcaAdj   = venue === 'home' ? state.hca / 100 : -(state.hca / 100);
+  const pGame    = Math.min(0.94, Math.max(0.06, state.prior / 100 + hcaAdj));
+  const seriesP  = seriesProb(pGame, hw, aw); // already returns 0-100
+
+  const dateStr  = game.date
+    ? new Date(game.date).toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric', hour:'numeric', minute:'2-digit' })
+    : 'TBD';
+
+  document.getElementById('pregameTitle').textContent    = `Game ${hw + aw + 1} · Western Conference Finals`;
+  document.getElementById('pregameSub').textContent      = `${team1IsHome ? t2 : t1} at ${team1IsHome ? t1 : t2} · ${dateStr}`;
+  document.getElementById('pregameProbTeam1').textContent = t1.split(' ').pop();
+  document.getElementById('pregameProbTeam2').textContent = t2.split(' ').pop();
+  document.getElementById('pregameProbVal1').textContent  = seriesP.toFixed(1) + '%';
+  document.getElementById('pregameProbVal2').textContent  = (100 - seriesP).toFixed(1) + '%';
+}
+
+// ── Auto-polling ──────────────────────────────────────────────────────────────
+function startLivePolling() {
+  stopLivePolling();
+  LIVE.polling = setInterval(refreshLiveData, 30000);
+  apiLog('Live polling started (30s interval)', 'info');
+}
+function stopLivePolling() {
+  if (LIVE.polling) { clearInterval(LIVE.polling); LIVE.polling = null; }
+}
+
+// ── What-If Simulator ─────────────────────────────────────────────────────────
+function runWhatIf() {
+  const period   = parseInt(document.getElementById('wiPeriod').value) || 4;
+  const clock    = document.getElementById('wiClock').value.trim() || '0:00';
+  const s1       = parseInt(document.getElementById('wiScore1').value) || 0;
+  const s2       = parseInt(document.getElementById('wiScore2').value) || 0;
+  const diff     = s1 - s2;
+  const gameProb = computeInGameWinProb(diff, period, clock);
+
+  const hw = state.games.filter(g => g.winner === 'home').length;
+  const aw = state.games.filter(g => g.winner === 'away').length;
+  const impl = computeSeriesImplications(gameProb / 100, hw, aw);
+
+  document.getElementById('wiGameProb1').textContent   = gameProb.toFixed(1) + '%';
+  document.getElementById('wiGameProb2').textContent   = (100 - gameProb).toFixed(1) + '%';
+  document.getElementById('wiSeriesIfWin').textContent  = impl.ifWin.toFixed(1) + '%';
+  document.getElementById('wiSeriesIfLose').textContent = impl.ifLose.toFixed(1) + '%';
+  document.getElementById('wiSeriesLive').textContent   = impl.live.toFixed(1) + '%';
+  document.getElementById('whatifResult').style.display = 'flex';
 }
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
